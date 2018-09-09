@@ -6,11 +6,11 @@ var gulp				= require('gulp'),
 
 // Task SASS
 gulp.task('sass', function(){
-	return gulp.src('app/sass/*.sass')
+	return gulp.src('src/sass/*.sass')
 	.pipe(sass({outputStyle: 'expanded'}).on('error', sass.logError))
 	.pipe(autopref(['last 20 versions', '> 1%', 'ie 8', 'ie 7'], {cascade: true}))
 	.pipe(combinemq())
-	.pipe(gulp.dest('app/css'))
+	.pipe(gulp.dest('src/css'))
 	.pipe(browserSync.reload({stream:true}))
 });
 
@@ -18,7 +18,7 @@ gulp.task('sass', function(){
 gulp.task('browser-sync', function(){
 	browserSync({
 		server: {
-			baseDir:'app'
+			baseDir:'src'
 		},
 		notify:false
 	})
@@ -26,7 +26,7 @@ gulp.task('browser-sync', function(){
 
 // Task WATCH
 gulp.task('watch', ['browser-sync', 'sass'], function(){
-	gulp.watch('app/sass/*.sass', ['sass']);
-	gulp.watch('app/*.html', browserSync.reload);
-	gulp.watch('app/**/*.js', browserSync.reload);
+	gulp.watch('src/sass/*.sass', ['sass']);
+	gulp.watch('src/*.html', browserSync.reload);
+	gulp.watch('src/**/*.js', browserSync.reload);
 });
