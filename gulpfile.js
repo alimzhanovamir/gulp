@@ -34,6 +34,61 @@ gulp.task('nunjucks', function() {
 		.pipe(gulp.dest('src'));
 });
 
+// gulp.task('iconfont', function(){
+//   gulp.src(['src/img/svg/*.svg'])
+//      .pipe(iconfontCss({
+//         path: 'src/sass/_icon_template.scss',
+//         fontName: 'fa',
+//         targetPath: '../../sass/_icons.scss',
+//         fontPath: 'src/fonts/icons/'
+//      }))
+//      .pipe(iconfont({
+// 				fontName: 'fa',
+// 				formats: ['ttf', 'woff', 'woff2'],
+//      }))
+//      .pipe(gulp.dest('src/fonts/icons/'));
+// });
+
+// Task SVG-SPRITE
+gulp.task('svg', function () {
+	return gulp.src('src/img/svg/*.svg')
+		.pipe(svgmin({
+			js2svg: {
+				pretty: true
+			}
+		}))
+		.pipe(cheerio({
+			run: function ($) {
+				$('[fill]').removeAttr('fill');
+				$('[stroke]').removeAttr('stroke');
+				$('[style]').removeAttr('style');
+			},
+			parserOptions: {xmlMode: true}
+		}))
+		.pipe(replace('&gt;', '>'))
+		.pipe(svgSprite({
+			mode: {
+				symbol: {
+					sprite: '../sprite.svg',
+					render: {
+						scss: {
+							dest:'../../../sass/_sprite.scss',
+							template: 'src/sass/_sprite-template.scss'
+						}
+					}
+				}
+			}
+		}))
+		.pipe(gulp.dest('src/img/sprite/'));
+});
+
+// Task HTML-PRETTIFY
+gulp.task('html', function() {
+  gulp.src('src/*.html')
+    .pipe(prettify({indent_char: '	', indent_size: 1}))
+    .pipe(gulp.dest('src'))
+});
+
 // Task WATCH
 gulp.task('watch', ['nunjucks', 'browser-sync', 'sass'], function(){
 	gulp.watch('src/**/*.+(html|njk)', ['nunjucks'])
